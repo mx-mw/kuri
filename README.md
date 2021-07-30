@@ -3,6 +3,13 @@
 
 Usage: kuri generate \<blueprint> \<module name>
 
+Usage
+-----
+### In a blueprint:
+`%!%ModuleName%!%` = the name of the module you are generating (passed as the 3rd positional argument)
+`%!%License%!%` = the project's license (the *path* to the file is specified in kuri.toml, not the whole fucking GPLv3)
+`%!%Version%!%` = the current version of the project (specified in kuri.toml)
+
 Configuration
 -------------
 Kuri is configured using a `kuri.toml` file. Kuri will look for a kuri.toml file in the project's root directory.<br>
@@ -108,7 +115,7 @@ import React from 'react';
 export default class %!%ModuleName%!% extends React.Component {
     render() {
         return <>
-            <p>%!%ModuleName%!%</p>
+            <p>%!%ModuleName%!% %!%Version%!%</p>
         </>
     }
 }
@@ -124,9 +131,64 @@ import React from 'react';
 export default class MyComponent extends React.Component {
     render() {
         return <div className="MyComponent">
-            <p>MyComponent</p>
+            <p>MyComponent v1.5.1</p>
         </div>
     }
 }
 ```
 
+### E.G. 3: Generate HTML and CSS pair
+`blueprints/css/page.css.kbp`
+```kbp
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap');
+
+#%!%ModuleName%!% {
+    font-family: 'Ubuntu', sans-serif;
+    font-size:   16px;
+}
+```
+
+`blueprints/html/page.html.kbp`
+```kbp
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="../css/%!%ModuleName%!%.css">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>%!%ModuleName%!%</title>
+</head>
+<div id="%!%ModuleName%!%">
+    <p>%!%ModuleName%!% %!%Version%!%</p>
+</div>
+</html>
+```
+`$ kuri g page Homepage` <br><br>
+Output: <br><br>
+`src/css/Homepage.css`
+```css
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap');
+
+#Homepage {
+    font-family: 'Ubuntu', sans-serif;
+    font-size:   16px;
+}
+```
+
+`src/html/Homepage.html`
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="../css/Homepage.css">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homepage</title>
+</head>
+<div id="Homepage">
+    <p>Homepage v0.0.1</p>
+</div>
+</html>
+```
