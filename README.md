@@ -1,14 +1,27 @@
 # Kuri
-## A multipurpose boilerplate generator
+## A multipurpose blueprint generator
+Kuri is a simple blueprinting tool to speed up your development process.
 
 Usage: kuri generate \<blueprint> \<module name>
 
-Usage
------
-### In a blueprint:
+Table of contents:
+------------------
+1. [Boilerplates](#Boilerplates)
+2. [Configuration](#Configuration)
+3. [Examples](#Examples)
+
+Boilerplates
+------------
+
+### Flags:
 `%!%ModuleName%!%` = the name of the module you are generating (passed as the 3rd positional argument)
 `%!%License%!%` = the project's license (the *path* to the file is specified in kuri.toml, not the whole fucking GPLv3)
 `%!%Version%!%` = the current version of the project (specified in kuri.toml)
+
+### Things to note:
+- Flags are case insensitive
+- You cannot escape a flag if there is a naming conflict - they can be reconfigured in kuri.toml
+
 
 Configuration
 -------------
@@ -164,6 +177,7 @@ export default class MyComponent extends React.Component {
 </div>
 </html>
 ```
+
 `$ kuri g page Homepage` <br><br>
 Output: <br><br>
 `src/css/Homepage.css`
