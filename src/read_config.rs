@@ -5,13 +5,21 @@ use std::path::Path;
 
 #[derive(Deserialize, Clone)]
 pub struct ConfigFile {
-    pub template: Template,
+    pub template: Option<Template>,
     pub project: Project,
     pub meta: Meta,
+    pub flags: Option<Flags>
 }
 #[derive(Deserialize, Clone)]
 pub struct Meta {
     pub kuri_version: String,
+}
+
+#[derive(Deserialize, Clone)]
+pub struct Flags {
+    pub module_name_rep: Option<String>,
+    pub license_rep    : Option<String>,
+    pub version_rep    : Option<String>
 }
 
 #[derive(Deserialize, Clone)]
