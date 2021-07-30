@@ -19,7 +19,14 @@ pub struct Meta {
 pub struct Flags {
     pub module_name_rep: Option<String>,
     pub license_rep    : Option<String>,
-    pub version_rep    : Option<String>
+    pub version_rep    : Option<String>,
+    pub custom_flags   : Option<Vec<CustomFlag>>
+}
+
+#[derive(Deserialize, Clone)]
+pub struct CustomFlag {
+    pub name        : String,
+    pub replace_with: String
 }
 
 #[derive(Deserialize, Clone)]
@@ -37,6 +44,7 @@ pub struct Project {
     pub blueprint_dir: Option<String>,
     pub src_dir: Option<String>,
 }
+
 
 impl ConfigFile {
     pub fn read() -> ConfigFile {

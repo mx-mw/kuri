@@ -11,4 +11,12 @@ language="rust"
 variant="cargo"
 
 [meta]
-kuri_version="0.0.1"
+kuri_version="1.0"
+
+[flags]
+custom_flags=[
+    {name="ArgTest", replace_with="arg|1"},
+    {name="StringTest", replace_with="str|2"}, 
+    {name="FileTest", replace_with="file|LICENSE"}, 
+    {name="ArgFileTest", replace_with="argfile|2"}
+    ]

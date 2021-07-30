@@ -38,11 +38,11 @@ version="v0.0.1" #not required
 license="LICENSE" #not required
 repo="https://github.com/mx-mw/kuri" #not required
 
-[template] #the project template (e.g. node, ember, CRA, cargo, etc) - not required
+[template] #the project template (e.g. node, ember, CRA, cargo, etc)... not used for now - not required
 language="rust" 
 variant="cargo"
 
-[meta] #kuri metadata... for now only consists of a version - required
+[meta] #kuri metadata... for now only consists of a version... not used for now - required
 kuri_version="0.0.1" #required
 
 [flags] #allows you to replace the default flags with your own - not required
