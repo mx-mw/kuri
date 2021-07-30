@@ -9,7 +9,7 @@ Kuri is configured using a `kuri.toml` file. Kuri will look for a kuri.toml file
 
 example `kuri.toml`
 ```toml
-[project]
+[project] #The general configuration for the project - required
 project_name="test" #required
 src_dir="out" #not required
 blueprint_dir="blueprints" #not required
@@ -17,11 +17,11 @@ version="v0.0.1" #not required
 license="LICENSE" #not required
 repo="https://github.com/mx-mw/kuri" #not required
 
-[template] #not required
+[template] #the project template (e.g. node, ember, CRA, cargo, etc) - not required
 language="rust" 
 variant="cargo"
 
-[meta]
+[meta] #kuri metadata... for now only consists of a version - required
 kuri_version="0.0.1" #required
 ```
 
