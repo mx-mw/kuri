@@ -1,3 +1,4 @@
+<img src="https://www.code-inspector.com/project/25868/score/svg"></img>
 # Kuri
 ## A multipurpose blueprint generator
 Kuri is a simple blueprinting tool to speed up your development process.
