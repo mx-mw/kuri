@@ -1,9 +1,9 @@
 [package]
 name = "kuri"
 version = "0.1.0"
-authors = ["woofymax <64120270+woofymax@users.noreply.github.com>"]
+authors = ["Max Morrow"]
 edition = "2018"
-
+license-file = "LICENSE"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
