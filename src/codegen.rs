@@ -1,30 +1,15 @@
-pub struct CodegenOptions {
-    module_name: &'static str, 
-    license: Option<&'static str>,
-    version: Option<&'static str>,   
-}
-
-impl CodegenOptions {
-    pub fn new (module_name: &'static str, license: Option<&'static str>, version: Option<&'static str>) -> CodegenOptions{
-        CodegenOptions {
-            module_name: module_name,
-            license: license,
-            version: version
-        }
-    }
-}
-
-pub fn codegen<'a, 'b>(source_string: String, options: CodegenOptions) -> String {
+use crate::read_config::ConfigFile;
+use crate::file_rw::read_license_file;
+pub fn codegen(source_string: String, options: ConfigFile) -> String {
     let mut source = source_string;
-    source = source.replace("%!%ModName%!%", options.module_name);
+    source = source.replace("%!%ModuleName%!%", options.project.project_name.as_str());
     
-    if let Some(license) = options.license {
-        source = source.replace("%!%License%!%", license);
+    if let Some(license) = options.project.license {
+        source = source.replace("%!%License%!%", read_license_file(license).as_str());
     };
     
-    if let Some(version) = options.version {
-        source = source.replace("%!%Version%!%", version);
+    if let Some(version) = options.project.version {
+        source = source.replace("%!%Version%!%", version.as_str());
     };
-    
-    source.to_owned()
+    source
 }

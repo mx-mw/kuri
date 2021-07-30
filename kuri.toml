@@ -1,0 +1,14 @@
+[project]
+project_name="test"
+src_dir="out"
+blueprint_dir="blueprints"
+version="v0.0.1"
+license="LICENSE"
+repo="https://github.com/mx-mw/kuri"
+
+[template]
+language="rust"
+variant="cargo"
+
+[meta]
+kuri_version="0.0.1"
