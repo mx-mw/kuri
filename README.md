@@ -15,8 +15,8 @@ Boilerplates
 
 ### Flags:
 `%!%ModuleName%!%` = the name of the module you are generating (passed as the 3rd positional argument)
-`%!%License%!%` = the project's license (the *path* to the file is specified in kuri.toml, not the whole fucking GPLv3)
-`%!%Version%!%` = the current version of the project (specified in kuri.toml)
+`%!%License%!%`    = the project's license (the *path* to the file is specified in kuri.toml, not the whole fucking GPLv3)
+`%!%Version%!%`    = the current version of the project (specified in kuri.toml)
 
 ### Things to note:
 - Flags are case insensitive
