@@ -17,7 +17,7 @@ fn main() {
     let argv = env::args();
     let argc = argv.len();
     let args = argv.collect::<Vec<String>>();
-
+    
     if argc == 4 && (args[1] == "g" || args[1] == "generate") {
         let config = ConfigFile::read();
         let input_directory = match config.project.blueprint_dir {
@@ -72,7 +72,7 @@ fn main() {
                     input_directory, os_path_standard, generate_path, bp_type, filetype
                 ));
                 if source != "".to_string() {
-                    let out = codegen(source, config.clone());
+                    let out = codegen(source, args[3].to_string(), config.clone());
                     match write_generated_file(
                         format!(
                             "{}{}{}{}.{}",
