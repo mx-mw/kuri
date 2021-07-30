@@ -23,6 +23,12 @@ variant="cargo"
 
 [meta] #kuri metadata... for now only consists of a version - required
 kuri_version="0.0.1" #required
+
+[flags] #allows you to replace the default flags with your own - not required
+module_name_rep="[[ModuleName]]"
+license_rep="[[License]]"
+version_rep="[[Version]]
+
 ```
 
 Example Usage
