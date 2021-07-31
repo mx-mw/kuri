@@ -1,5 +1,5 @@
 /target
 /blueprints
 /out
-kuri.toml
-/release
+./kuri.toml
+/build
