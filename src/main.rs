@@ -87,7 +87,7 @@ mod tests {
     fn config_test() {
         let conf = indoc! {"
         [project]
-        project_name=\"Project\"
+        project_name=\"TestProject\"
         
         [meta]
         kuri_version=\"1.0\""}.to_string();
