@@ -76,6 +76,8 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
+    use crate::discover_files::discover_files;
+    use crate::file_rw::get_os_path_standard;
     use crate::read_config::{ConfigFile, Meta, Project};
     use indoc::indoc;
     
@@ -113,5 +115,10 @@ mod tests {
         };
 
         assert_eq!(conf_struct, ConfigFile::read(Some(conf)))
+    }
+
+    #[test]
+    fn file_discovery_test() {
+        assert_eq!(vec![format!("blueprints{}test.rs.kbp", get_os_path_standard())], discover_files("blueprints".to_string()));
     }
 }

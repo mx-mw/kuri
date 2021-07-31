@@ -1,5 +1,5 @@
+use crate::file_rw::{get_os_path_standard, read_blueprint, write_generated_file};
 use crate::codegen::codegen;
-use crate::file_rw::{read_blueprint, write_generated_file};
 use crate::nio::*;
 use crate::read_config::ConfigFile;
 use glob::glob;
@@ -35,38 +35,22 @@ pub fn discover_files_loop<'a, 'c, 'b>(
     for i in discover_files(input_directory.to_string()) {
         let bp_file: &str;
         let mut generate_path = String::new();
-        let os_path_standard: char;
-        if i.split('/').count() == 1 {
-            os_path_standard = '\\';
-            let vec = i.split('\\').collect::<Vec<&str>>();
-            bp_file = match vec.last() {
-                None => "",
-                Some(f) => f,
-            };
-            if let Some((_, elements)) = vec.split_last() {
-                if let Some((_, first)) = elements.split_first() {
-                    for j in first {
-                        generate_path.push_str(j);
-                        generate_path.push('\\');
-                    }
-                }
-            }
-        } else {
-            os_path_standard = '/';
-            let vec = i.split('/').collect::<Vec<&str>>();
-            bp_file = match vec.last() {
-                None => "",
-                Some(f) => f,
-            };
-            if let Some((_, elements)) = vec.split_last() {
-                if let Some((_, first)) = elements.split_first() {
-                    for j in first {
-                        generate_path.push_str(j);
-                        generate_path.push('/');
-                    }
+        let os_path_standard = get_os_path_standard();
+
+        let vec = i.split(os_path_standard).collect::<Vec<&str>>();
+        bp_file = match vec.last() {
+            None => "",
+            Some(f) => f,
+        };
+        if let Some((_, elements)) = vec.split_last() {
+            if let Some((_, first)) = elements.split_first() {
+                for j in first {
+                    generate_path.push_str(j);
+                    generate_path.push(os_path_standard);
                 }
             }
         }
+        
         let bp_type = bp_file.split('.').collect::<Vec<&str>>()[0];
         let filetype = bp_file.split('.').collect::<Vec<&str>>()[1];
         if bp_type == args[2] {
