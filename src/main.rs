@@ -76,9 +76,11 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
+    use crate::codegen::codegen;
     use crate::discover_files::discover_files;
     use crate::file_rw::get_os_path_standard;
     use crate::read_config::{ConfigFile, Meta, Project};
+
     use indoc::indoc;
     
     /************************************************************
@@ -120,5 +122,17 @@ mod tests {
     #[test]
     fn file_discovery_test() {
         assert_eq!(vec![format!("blueprints{}test.rs.kbp", get_os_path_standard())], discover_files("blueprints".to_string()));
+    }
+
+    #[test]
+    fn codegen_test() {
+        let config_string = indoc! {"
+        [project]
+        project_name=\"TestProject\"
+        
+        [meta]
+        kuri_version=\"1.0\""}.to_string();
+        let config = ConfigFile::read(Some(config_string));
+        assert_eq!(codegen("%!%ModuleName%!%".to_string(), "CodegenTest".to_string(), config, &["".to_string()]), "CodegenTest".to_string());
     }
 }
