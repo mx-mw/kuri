@@ -2,6 +2,7 @@ use std::fs::{File, create_dir};
 use std::io::prelude::*;
 use std::path::Path;
 use indoc::indoc;
+use std::env;
 
 /******************************
 *****Read a blueprint file*****
@@ -95,5 +96,17 @@ pub fn get_wd() -> String {
     match std::env::current_dir() {
         Ok(dir) => dir.display().to_string(),
         Err(e) => panic!("{}", e)
+    }
+}
+
+/*********************************
+*****Get the OS path standard*****
+*********************************/
+
+pub fn get_os_path_standard() -> char {
+    if env::consts::OS == "windows" {
+        '\\'
+    } else {
+        '/'
     }
 }
