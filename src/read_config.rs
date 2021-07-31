@@ -8,7 +8,7 @@ pub struct ConfigFile {
     pub template: Option<Template>,
     pub project: Project,
     pub meta: Meta,
-    pub flags: Option<Flags>
+    pub flags: Option<Flags>,
 }
 #[derive(Deserialize, Clone)]
 pub struct Meta {
@@ -18,15 +18,15 @@ pub struct Meta {
 #[derive(Deserialize, Clone)]
 pub struct Flags {
     pub module_name_rep: Option<String>,
-    pub license_rep    : Option<String>,
-    pub version_rep    : Option<String>,
-    pub custom_flags   : Option<Vec<CustomFlag>>
+    pub license_rep: Option<String>,
+    pub version_rep: Option<String>,
+    pub custom_flags: Option<Vec<CustomFlag>>,
 }
 
 #[derive(Deserialize, Clone)]
 pub struct CustomFlag {
-    pub name        : String,
-    pub replace_with: String
+    pub name: String,
+    pub replace_with: String,
 }
 
 #[derive(Deserialize, Clone)]
@@ -45,7 +45,6 @@ pub struct Project {
     pub src_dir: Option<String>,
 }
 
-
 impl ConfigFile {
     pub fn read() -> ConfigFile {
         let path_object = Path::new("kuri.toml");
@@ -54,16 +53,27 @@ impl ConfigFile {
             Err(reason) => panic!("Couldn't open file {}: {}", display, reason),
             Ok(file) => file,
         };
-    
         let mut file_string = String::new();
         match file.read_to_string(&mut file_string) {
             Err(reason) => panic!("Couldn't read {}: {}", display, reason),
-            Ok(_) => file
+            Ok(_) => file,
         };
-        
         match toml::from_str(file_string.as_str()) {
             Err(e) => panic!("{}", e),
-            Ok(deserialized) => deserialized
+            Ok(deserialized) => deserialized,
         }
     }
+}
+
+pub fn get_directories<'a>(config: &'a ConfigFile) -> (String, String) {
+    (
+        match &config.project.blueprint_dir {
+            None => "blueprints".to_string(),
+            Some(p) => p.to_string(),
+        },
+        match &config.project.src_dir {
+            None => "src".to_string(),
+            Some(p) => p.to_string(),
+        },
+    )
 }
