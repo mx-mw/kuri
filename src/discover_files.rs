@@ -1,9 +1,12 @@
-use glob::glob;
 use crate::codegen::codegen;
 use crate::file_rw::{read_blueprint, write_generated_file};
 use crate::nio::*;
 use crate::read_config::ConfigFile;
+use glob::glob;
 
+/*********************************
+*****Discover blueprint files*****
+*********************************/
 pub fn discover_files(search_dir: String) -> Vec<String> {
     let mut paths_vec: Vec<String> = Vec::new();
 
@@ -19,7 +22,16 @@ pub fn discover_files(search_dir: String) -> Vec<String> {
     paths_vec
 }
 
-pub fn discover_files_loop<'a, 'c, 'b>(input_directory: &'a str, output_directory: &'a str, args: &'b [String], config: &'c ConfigFile, generated: &mut Vec<String>) {
+/*********************************************
+*****Generate output files for blueprints*****
+*********************************************/
+pub fn discover_files_loop<'a, 'c, 'b>(
+    input_directory: &'a str,
+    output_directory: &'a str,
+    args: &'b [String],
+    config: &'c ConfigFile,
+    generated: &mut Vec<String>,
+) {
     for i in discover_files(input_directory.to_string()) {
         let bp_file: &str;
         let mut generate_path = String::new();
@@ -63,7 +75,12 @@ pub fn discover_files_loop<'a, 'c, 'b>(input_directory: &'a str, output_director
                 input_directory, os_path_standard, generate_path, bp_type, filetype
             ));
             if source != *"" {
-                let out = codegen(source, args[3].to_string(), config.clone(), &args[4..].to_vec());
+                let out = codegen(
+                    source,
+                    args[3].to_string(),
+                    config.clone(),
+                    &args[4..].to_vec(),
+                );
                 match write_generated_file(
                     format!(
                         "{}{}{}{}.{}",

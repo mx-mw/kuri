@@ -2,6 +2,10 @@ use crate::file_rw::read_flag_file;
 use crate::nio::*;
 use crate::read_config::ConfigFile;
 
+/*************************************************
+*****Generate the output code for a blueprint*****
+*************************************************/
+
 pub fn codegen(
     source_string: String,
     module_name: String,

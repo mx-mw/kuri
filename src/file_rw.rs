@@ -3,6 +3,10 @@ use std::io::prelude::*;
 use std::path::Path;
 use indoc::indoc;
 
+/******************************
+*****Read a blueprint file*****
+******************************/
+
 pub fn read_blueprint(path_string: String) -> String {
     let path_object = Path::new(&path_string);
     let display = path_object.display();
@@ -19,6 +23,10 @@ pub fn read_blueprint(path_string: String) -> String {
     };
     file_string
 }
+
+/************************************
+*****Write a generated blueprint*****
+************************************/
 
 pub fn write_generated_file(
     path: String,
@@ -37,6 +45,10 @@ pub fn write_generated_file(
     }
 }
 
+/**********************************************************
+*****Read a file for a custom flag to be replaced with*****
+**********************************************************/
+
 pub fn read_flag_file(path: String) -> String {
     let path_object = Path::new(&path);
     let display = path_object.display();
@@ -52,6 +64,10 @@ pub fn read_flag_file(path: String) -> String {
     };
     file_string + "\n"
 }
+
+/*************************************
+*****Initialize a new config file*****
+*************************************/
 
 pub fn init_new_config() -> std::io::Result<()> {    
     let conf = indoc! {"
@@ -70,6 +86,10 @@ pub fn init_new_config() -> std::io::Result<()> {
     Err(std::io::Error::new(std::io::ErrorKind::Other, "Kuri already initalised in working directory"))
     
 }
+
+/**********************************
+*****Get the working directory*****
+**********************************/
 
 pub fn get_wd() -> String {
     match std::env::current_dir() {
