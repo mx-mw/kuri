@@ -84,7 +84,7 @@ pub fn init_new_config() -> std::io::Result<()> {
         return Ok(())
     }
 
-    Err(std::io::Error::new(std::io::ErrorKind::Other, "Kuri already initalised in working directory"))
+    Err(std::io::Error::new(std::io::ErrorKind::Other, ""))
     
 }
 
