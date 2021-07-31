@@ -12,13 +12,24 @@ use nio::*;
 use read_config::{get_directories, ConfigFile};
 use std::env;
 
+/**********************
+*****Main Function*****
+**********************/
+
 fn main() {
+    /******************************************
+    *****Get Args to appropriate variables*****
+    ******************************************/
     let argv = env::args();
     let argc = argv.len();
     let args = argv.collect::<Vec<String>>();
 
+    /*************************
+    *****Generate Command*****
+    *************************/
+
     if argc >= 4 && (args[1] == "g" || args[1] == "generate") {
-        let config = ConfigFile::read();
+        let config = ConfigFile::read(None);
         let (input_directory, output_directory) = get_directories(&config);
 
         let mut generated: Vec<String> = vec![];
@@ -37,12 +48,70 @@ fn main() {
                 green(i);
             }
         }
+
+    /***********************************
+    *****Initialize project command*****
+    ***********************************/
+
     } else if argc == 2 && args[1] == "init" {
         match init_new_config() {
             Ok(_) => green(format!("Project initalised in {}", get_wd())),
             Err(_) => red(format!("Error: project already initalised in {}", get_wd())),
         }
+
+    /********************************************
+    *****No command found, show proper usage*****
+    *********************************************/
+
     } else {
-        red("Usage: kuri generate <blueprint> <module name>".to_string())
+        println!("Usage:");
+        red("kuri generate <blueprint> <module name>".to_string());
+        red("kuri init".to_string());
+    }
+}
+
+/**************
+*****Tests*****
+***************/
+
+#[cfg(test)]
+mod tests {
+    use crate::read_config::{ConfigFile, Meta, Project};
+    use indoc::indoc;
+    
+    /************************************************************
+    *****Test that the configuration file generates properly*****
+    ************************************************************/
+    
+    #[test]
+    fn config_test() {
+        let conf = indoc! {"
+        [project]
+        project_name=\"Project\"
+        
+        [meta]
+        kuri_version=\"1.0\""}.to_string();
+
+        let project = Project {
+            project_name: "TestProject".to_string(),
+            repo: None,
+            license: None,
+            version: None,
+            blueprint_dir: None,
+            src_dir: None,
+        };
+
+        let meta = Meta {
+            kuri_version: "1.0".to_string(),
+        };
+
+        let conf_struct = ConfigFile {
+            flags: None,
+            meta: meta,
+            project: project,
+            template: None,
+        };
+
+        assert_eq!(conf_struct, ConfigFile::read(Some(conf)))
     }
 }
