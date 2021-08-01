@@ -49,6 +49,12 @@ kuri_version="0.0.1" #required
 module_name_rep="[[ModuleName]]"
 license_rep="[[License]]"
 version_rep="[[Version]]
+custom_flags=[ #kuri allows you to create custom flags. the | and everything before it is ignored
+    {name="ArgTest", replace_with="arg|1"}, #create a custom flag that is replaced by a positional argument (counting from 1). This example would replace %!%ArgTest%!% with the first positional argument passed to kuri
+    {name="StringTest", replace_with="str|wonderful string"}, #create a flag that is replaced by a string. This would replace %!%StringTest%!% with "wonderful string"
+    {name="FileTest", replace_with="file|LICENSE"}, #create a flag that is replaced by the contents of a file. This example would replace %!%FileTest%!% with the contents of the LICENSE file
+    {name="ArgFileTest", replace_with="argfile|2"} #create a flag that is replaced by the contents of a file specified with a positional argument. This example would replace %!%ArgFileTest%!% with the contents of a file specified with the second positional argument
+    ]
 
 ```
 
