@@ -384,4 +384,22 @@ mod tests {
             "ArgfileTest1\n".to_string()
         );
     }
+
+    #[test]
+    fn remove_prefix_test() {
+        assert_eq!(
+            remove_prefix("arg|test".to_string(), &"arg|"),
+            "test");
+        assert_ne!(
+            remove_prefix("arg|test".to_string(), &"arg|"),
+            "arg|test");
+        assert_eq!(
+            remove_prefix("argfile|test".to_string(), &"argfile|"),
+            "test"
+        );
+        assert_ne!(
+            remove_prefix("argfile|test".to_string(), &"argfile|"),
+            "argfile|test"
+        );
+    }
 }
