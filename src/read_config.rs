@@ -197,7 +197,7 @@ impl fmt::Debug for ConfigFile {
 *****Get the input and output directories*****
 *********************************************/
 
-pub fn get_directories<'a>(config: &'a ConfigFile) -> (String, String) {
+pub fn get_directories(config: &'_ ConfigFile) -> (String, String) {
     (
         match &config.project.blueprint_dir {
             None => "blueprints".to_string(),
