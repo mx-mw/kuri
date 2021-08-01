@@ -76,7 +76,7 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
-    use crate::file_rw::get_os_path_standard;
+    use crate::file_rw::{get_os_path_standard, read_file};
     use crate::discover_files::discover_files;
     use crate::codegen::codegen;
     use crate::read_config::{ConfigFile, Meta, Project};
@@ -135,5 +135,18 @@ mod tests {
     fn file_dicovery_test() {
         assert_eq!(vec![format!("test{0}file_discovery{0}fd.test.kbp", get_os_path_standard())], discover_files(format!("test{0}file_discovery", get_os_path_standard())));
     }
+
+    #[test]
+    fn read_blueprint_test() {
+        // test if the read file function actually works
+        assert_eq!(read_file(format!("test{0}read_file{0}fr0.test", get_os_path_standard())), "Test\n");
+        assert_eq!(read_file(format!("test{0}read_file{0}fr1.test", get_os_path_standard())), "Test Numero Uno\n");
+        assert_eq!(read_file(format!("test{0}read_file{0}fr2.test", get_os_path_standard())), "Test Numero Duo\n");
+
+        // make sure newlines are added
+        assert_ne!(read_file(format!("test{0}read_file{0}fr0.test", get_os_path_standard())), "Test");
+        assert_ne!(read_file(format!("test{0}read_file{0}fr1.test", get_os_path_standard())), "Test Numero Uno");
+        assert_ne!(read_file(format!("test{0}read_file{0}fr2.test", get_os_path_standard())), "Test Numero Duo");
+        }
 
 }
