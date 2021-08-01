@@ -46,7 +46,15 @@ pub fn codegen(
     source
 }
 
-fn enumerate_custom_flags(src: String, customs: std::vec::Vec<CustomFlag>, args: &[String]) -> String {
+/**********************************************
+*****Enumerate over a list of custom flags*****
+**********************************************/
+
+fn enumerate_custom_flags(
+    src: String,
+    customs: std::vec::Vec<CustomFlag>,
+    args: &[String],
+) -> String {
     let mut source = src;
     for custom_flag in customs {
         if custom_flag.replace_with.to_lowercase().starts_with("arg|")
