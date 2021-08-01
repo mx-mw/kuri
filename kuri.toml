@@ -1,7 +1,7 @@
 [project]
 project_name="test"
 src_dir="out"
-blueprint_dir="blueprints"
+blueprint_dir="out"
 version="v0.0.1"
 license="LICENSE"
 repo="https://github.com/mx-mw/kuri"
@@ -15,8 +15,5 @@ kuri_version="1.0"
 
 [flags]
 custom_flags=[
-    {name="ArgTest", replace_with="arg|1"},
-    {name="StringTest", replace_with="str|2"}, 
-    {name="FileTest", replace_with="file|LICENSE"}, 
-    {name="ArgFileTest", replace_with="argfile|2"}
-    ]
+    {name="ArgTest", replace_with="arg|1"}
+]
