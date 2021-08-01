@@ -137,7 +137,7 @@ mod tests {
     }
 
     #[test]
-    fn read_blueprint_test() {
+    fn read_file_test() {
         // test if the read file function actually works
         assert_eq!(read_file(format!("test{0}read_file{0}fr0.test", get_os_path_standard())), "Test\n");
         assert_eq!(read_file(format!("test{0}read_file{0}fr1.test", get_os_path_standard())), "Test Numero Uno\n");
