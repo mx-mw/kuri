@@ -1,4 +1,4 @@
-use crate::file_rw::read_flag_file;
+use crate::file_rw::read_file;
 use crate::nio::*;
 use crate::read_config::{ConfigFile, CustomFlag, Flags};
 
@@ -116,7 +116,7 @@ fn argfile(flag: CustomFlag, args: &[String], source: String) -> String {
         .unwrap();
     check_args(args, index);
     let path = args[index - 1].clone();
-    let file = read_flag_file(path);
+    let file = read_file(path);
     source.replace(format!("%!%{}%!%", flag.name).as_str(), file.as_str())
 }
 
@@ -126,7 +126,7 @@ fn argfile(flag: CustomFlag, args: &[String], source: String) -> String {
 
 fn file(flag: CustomFlag, source: String) -> String {
     let path = remove_prefix(flag.replace_with, &"file|");
-    let file = read_flag_file(path);
+    let file = read_file(path);
     source.replace(format!("%!%{}%!%", flag.name).as_str(), file.as_str())
 }
 

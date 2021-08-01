@@ -1,4 +1,4 @@
-use crate::file_rw::{get_os_path_standard, read_blueprint, write_generated_file};
+use crate::file_rw::{get_os_path_standard, read_file, write_generated_file};
 use crate::codegen::codegen;
 use crate::nio::*;
 use crate::read_config::ConfigFile;
@@ -54,7 +54,7 @@ pub fn discover_files_loop<'a, 'c, 'b>(
         let bp_type = bp_file.split('.').collect::<Vec<&str>>()[0];
         let filetype = bp_file.split('.').collect::<Vec<&str>>()[1];
         if bp_type == args[2] {
-            let source: String = read_blueprint(format!(
+            let source: String = read_file(format!(
                 "{}{}{}{}.{}.kbp",
                 input_directory, os_path_standard, generate_path, bp_type, filetype
             ));

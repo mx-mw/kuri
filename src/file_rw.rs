@@ -8,7 +8,7 @@ use std::env;
 *****Read a blueprint file*****
 ******************************/
 
-pub fn read_blueprint(path_string: String) -> String {
+pub fn read_file(path_string: String) -> String {
     let path_object = Path::new(&path_string);
     let display = path_object.display();
     let mut file = match File::open(&path_object) {
@@ -21,7 +21,7 @@ pub fn read_blueprint(path_string: String) -> String {
         Err(reason) => panic!("Couldn't read {}: {}", display, reason),
         Ok(_) => file,
     };
-    file_string
+    file_string + "\n"
 }
 
 /************************************
@@ -43,26 +43,6 @@ pub fn write_generated_file(
         file.write_all(data.as_bytes())?;
         Ok(())
     }
-}
-
-/**********************************************************
-*****Read a file for a custom flag to be replaced with*****
-**********************************************************/
-
-pub fn read_flag_file(path: String) -> String {
-    let path_object = Path::new(&path);
-    let display = path_object.display();
-    let mut file = match File::open(&path_object) {
-        Err(reason) => panic!("Couldn't open file {}: {}", display, reason),
-        Ok(file) => file,
-    };
-
-    let mut file_string = String::new();
-    match file.read_to_string(&mut file_string) {
-        Err(reason) => panic!("Couldn't read {}: {}", display, reason),
-        Ok(_) => file,
-    };
-    file_string + "\n"
 }
 
 /*************************************
