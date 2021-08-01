@@ -15,7 +15,6 @@ pub fn read_blueprint(path_string: String) -> String {
         Err(_) => return "".to_string(),
         Ok(file) => file,
     };
-    println!("display: {}", display);
 
     let mut file_string = String::new();
     match file.read_to_string(&mut file_string) {
