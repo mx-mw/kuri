@@ -52,7 +52,6 @@ pub fn codegen(
     if let Some(customs) = flags.custom_flags {
         source = enumerate_custom_flags(source, customs, args)
     }
-    return source;
     source
 }
 
