@@ -156,6 +156,6 @@ pub fn check_args(args: &[String], index: usize) {
 *****Remove the prefix from replace_with*****
 ********************************************/
 
-fn remove_prefix(replace_with: String, prefix: &&str) -> String {
+pub fn remove_prefix(replace_with: String, prefix: &&str) -> String {
     replace_with.to_lowercase().replacen(prefix, "", 1)
 }
