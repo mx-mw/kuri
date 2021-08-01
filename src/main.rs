@@ -158,12 +158,10 @@ mod tests {
         );
 
         assert_ne!(
-            vec![
-                format!(
-                    "test{0}file_discovery{0}fd0.test.kbp",
-                    get_os_path_standard()
-                )
-            ],
+            vec![format!(
+                "test{0}file_discovery{0}fd0.test.kbp",
+                get_os_path_standard()
+            )],
             discover_files(format!("test{0}file_discovery", get_os_path_standard()))
         );
     }
