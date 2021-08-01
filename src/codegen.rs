@@ -1,6 +1,6 @@
 use crate::file_rw::read_flag_file;
 use crate::nio::*;
-use crate::read_config::{ConfigFile, CustomFlag};
+use crate::read_config::{ConfigFile, CustomFlag, Flags};
 
 /*************************************************
 *****Generate the output code for a blueprint*****
@@ -13,36 +13,46 @@ pub fn codegen(
     args: &'_ [String],
 ) -> String {
     let mut source = source_string;
-    if let Some(flags) = options.flags {
-        source = source.replace(
-            match &flags.module_name_rep {
-                Some(s) => s.as_str(),
-                None => "%!%ModuleName%!%",
-            },
-            module_name.as_str(),
-        );
-
-        source = source.replace(
-            match &flags.license_rep {
-                Some(s) => s.as_str(),
-                None => "%!%License%!%",
-            },
-            module_name.as_str(),
-        );
-
-        source = source.replace(
-            match &flags.version_rep {
-                Some(s) => s.as_str(),
-                None => "%!%Version%!%",
-            },
-            module_name.as_str(),
-        );
-
-        if let Some(customs) = flags.custom_flags {
-            source = enumerate_custom_flags(source, customs, args)
+    let flags: Flags;
+    if let Some(f) = options.flags {
+        flags = f;
+    } else {
+        flags = Flags {
+            custom_flags: None,
+            license_rep: None,
+            module_name_rep: None,
+            version_rep: None,
         }
-        return source;
     }
+
+    source = source.replace(
+        match &flags.module_name_rep {
+            Some(s) => s.as_str(),
+            None => "%!%ModuleName%!%",
+        },
+        module_name.as_str(),
+    );
+
+    source = source.replace(
+        match &flags.license_rep {
+            Some(s) => s.as_str(),
+            None => "%!%License%!%",
+        },
+        module_name.as_str(),
+    );
+
+    source = source.replace(
+        match &flags.version_rep {
+            Some(s) => s.as_str(),
+            None => "%!%Version%!%",
+        },
+        module_name.as_str(),
+    );
+
+    if let Some(customs) = flags.custom_flags {
+        source = enumerate_custom_flags(source, customs, args)
+    }
+    return source;
     source
 }
 
