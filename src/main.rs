@@ -74,10 +74,10 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
-    use crate::codegen::codegen;
+    use crate::codegen::*;
     use crate::discover_files::discover_files;
     use crate::file_rw::{get_os_path_standard, read_file};
-    use crate::read_config::{ConfigFile, Meta, Project};
+    use crate::read_config::{ConfigFile, CustomFlag, Meta, Project};
 
     use indoc::indoc;
     /************************************************************
@@ -212,6 +212,176 @@ mod tests {
                 get_os_path_standard()
             )),
             "Test Numero Duo"
+        );
+    }
+
+    #[test]
+    fn cf_arg_test() {
+        // test for the first positional argument
+        let flag_1 = CustomFlag {
+            name: "Test".to_string(),
+            replace_with: "arg|1".to_string(),
+        };
+        assert_eq!(
+            arg(
+                flag_1.clone(),
+                &["It Works?".to_string()],
+                "%!%Test%!%".to_string()
+            ),
+            "It Works?".to_string()
+        );
+        assert_ne!(
+            arg(
+                flag_1.clone(),
+                &["It Works?".to_string()],
+                "%!%Test%!%".to_string()
+            ),
+            "It doesn't equal".to_string()
+        );
+        // test for the second positional argument
+        let flag_2 = CustomFlag {
+            name: "TestNumber2".to_string(),
+            replace_with: "arg|2".to_string(),
+        };
+        assert_eq!(
+            arg(
+                flag_2.clone(),
+                &["It Works?".to_string(), "It works again?".to_string()],
+                "%!%TestNumber2%!%".to_string()
+            ),
+            "It works again?".to_string()
+        );
+        assert_ne!(
+            arg(
+                flag_2.clone(),
+                &["It Works?".to_string(), "It works again?".to_string()],
+                "%!%TestNumber2%!%".to_string()
+            ),
+            "It still works".to_string()
+        );
+    }
+
+    #[test]
+    fn cf_argfile_test() {
+        // test for the first positional argument
+        let flag_1 = CustomFlag {
+            name: "Test".to_string(),
+            replace_with: "argfile|1".to_string(),
+        };
+        assert_eq!(
+            argfile(
+                flag_1.clone(),
+                &[format!(
+                    "test{0}custom_flags{0}file_1.test",
+                    get_os_path_standard()
+                )],
+                "%!%Test%!%".to_string()
+            ),
+            "ArgfileTest1\n".to_string()
+        );
+        assert_ne!(
+            argfile(
+                flag_1.clone(),
+                &[format!(
+                    "test{0}custom_flags{0}file_1.test",
+                    get_os_path_standard()
+                )],
+                "%!%Test%!%".to_string()
+            ),
+            "ArgfileTest2\n".to_string()
+        );
+        // test for the second positional argument
+        let flag_2 = CustomFlag {
+            name: "TestNumber2".to_string(),
+            replace_with: "argfile|2".to_string(),
+        };
+        assert_eq!(
+            argfile(
+                flag_2.clone(),
+                &[
+                    format!("test{0}custom_flags{0}file_1.test", get_os_path_standard()),
+                    format!("test{0}custom_flags{0}file_2.test", get_os_path_standard())
+                ],
+                "%!%TestNumber2%!%".to_string()
+            ),
+            "ArgfileTest2\n".to_string()
+        );
+        assert_ne!(
+            argfile(
+                flag_2.clone(),
+                &[
+                    format!("test{0}custom_flags{0}file_1.test", get_os_path_standard()),
+                    format!("test{0}custom_flags{0}file_2.test", get_os_path_standard())
+                ],
+                "%!%TestNumber2%!%".to_string()
+            ),
+            "ArgfileTest1\n".to_string()
+        );
+    }
+
+    #[test]
+    fn cf_str_test() {
+        // test for a random string
+        let flag_1 = CustomFlag {
+            name: "Test".to_string(),
+            replace_with: "str|Tested".to_string(),
+        };
+        assert_eq!(
+            str(flag_1.clone(), "%!%Test%!%".to_string()),
+            "tested".to_string()
+        );
+        assert_ne!(
+            str(flag_1.clone(), "%!%Test%!%".to_string()),
+            "test works".to_string()
+        );
+        // test for another string
+        let flag_2 = CustomFlag {
+            name: "TestNumber2".to_string(),
+            replace_with: "str|Test works".to_string(),
+        };
+        assert_eq!(
+            str(flag_2.clone(), "%!%TestNumber2%!%".to_string()),
+            "test works".to_string()
+        );
+        assert_ne!(
+            str(flag_2.clone(), "%!%TestNumber2%!%".to_string()),
+            "tested".to_string()
+        );
+    }
+
+    #[test]
+    fn cf_file_test() {
+        // test for file_1.test
+        let flag_1 = CustomFlag {
+            name: "Test".to_string(),
+            replace_with: format!(
+                "file|test{0}custom_flags{0}file_1.test",
+                get_os_path_standard()
+            ),
+        };
+        assert_eq!(
+            file(flag_1.clone(), "%!%Test%!%".to_string()),
+            "ArgfileTest1\n".to_string()
+        );
+        assert_ne!(
+            file(flag_1.clone(), "%!%Test%!%".to_string()),
+            "ArgfileTest2\n".to_string()
+        );
+        // test for file_2.test
+        let flag_2 = CustomFlag {
+            name: "TestNumber2".to_string(),
+            replace_with: format!(
+                "file|test{0}custom_flags{0}file_2.test",
+                get_os_path_standard()
+            ),
+        };
+        assert_eq!(
+            file(flag_2.clone(), "%!%TestNumber2%!%".to_string()),
+            "ArgfileTest2\n".to_string()
+        );
+        assert_ne!(
+            file(flag_2.clone(), "%!%TestNumber2%!%".to_string()),
+            "ArgfileTest1\n".to_string()
         );
     }
 }
