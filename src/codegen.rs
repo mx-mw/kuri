@@ -1,4 +1,4 @@
-use crate::file_rw::read_flag_file;
+use crate::file_rw::read_file;
 use crate::nio::*;
 use crate::read_config::{ConfigFile, CustomFlag, Flags};
 
@@ -94,7 +94,7 @@ fn enumerate_custom_flags(
 *****Replace a custom flag with text specified in a positional CLI argument*****
 *******************************************************************************/
 
-fn arg(flag: CustomFlag, args: &[String], source: String) -> String {
+pub fn arg(flag: CustomFlag, args: &[String], source: String) -> String {
     let index = remove_prefix(flag.replace_with, &"arg|")
         .parse::<usize>()
         .unwrap();
@@ -110,13 +110,13 @@ fn arg(flag: CustomFlag, args: &[String], source: String) -> String {
 *****Replace a custom flag with a file specified in a positional CLI argument*****
 *********************************************************************************/
 
-fn argfile(flag: CustomFlag, args: &[String], source: String) -> String {
+pub fn argfile(flag: CustomFlag, args: &[String], source: String) -> String {
     let index = remove_prefix(flag.replace_with, &"argfile|")
         .parse::<usize>()
         .unwrap();
     check_args(args, index);
     let path = args[index - 1].clone();
-    let file = read_flag_file(path);
+    let file = read_file(path);
     source.replace(format!("%!%{}%!%", flag.name).as_str(), file.as_str())
 }
 
@@ -124,9 +124,9 @@ fn argfile(flag: CustomFlag, args: &[String], source: String) -> String {
 *****Replace a custom flag with a file*****
 ******************************************/
 
-fn file(flag: CustomFlag, source: String) -> String {
+pub fn file(flag: CustomFlag, source: String) -> String {
     let path = remove_prefix(flag.replace_with, &"file|");
-    let file = read_flag_file(path);
+    let file = read_file(path);
     source.replace(format!("%!%{}%!%", flag.name).as_str(), file.as_str())
 }
 
@@ -134,7 +134,7 @@ fn file(flag: CustomFlag, source: String) -> String {
 *****Replace a custom flag with a string*****
 */
 
-fn str(flag: CustomFlag, source: String) -> String {
+pub fn str(flag: CustomFlag, source: String) -> String {
     source.replace(
         format!("%!%{}%!%", flag.name).as_str(),
         remove_prefix(flag.replace_with, &"str|").as_str(),
@@ -145,7 +145,7 @@ fn str(flag: CustomFlag, source: String) -> String {
 *****Check if sufficient arguments are passed*****
 *************************************************/
 
-fn check_args(args: &[String], index: usize) {
+pub fn check_args(args: &[String], index: usize) {
     if index > args.len() {
         red("Insufficient command line arguments for custom flag".to_string());
         panic!()
@@ -156,6 +156,6 @@ fn check_args(args: &[String], index: usize) {
 *****Remove the prefix from replace_with*****
 ********************************************/
 
-fn remove_prefix(replace_with: String, prefix: &&str) -> String {
+pub fn remove_prefix(replace_with: String, prefix: &&str) -> String {
     replace_with.to_lowercase().replacen(prefix, "", 1)
 }
