@@ -76,6 +76,8 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
+    use crate::file_rw::get_os_path_standard;
+    use crate::discover_files::discover_files;
     use crate::codegen::codegen;
     use crate::read_config::{ConfigFile, Meta, Project};
 
@@ -128,4 +130,10 @@ mod tests {
         let config = ConfigFile::read(Some(config_string));
         assert_eq!(codegen("%!%ModuleName%!%".to_string(), "CodegenTest".to_string(), config, &["".to_string()]), "CodegenTest".to_string());
     }
+
+    #[test]
+    fn file_dicovery_test() {
+        assert_eq!(vec![format!("test{0}file_discovery{0}fd.test.kbp", get_os_path_standard())], discover_files(format!("test{0}file_discovery", get_os_path_standard())));
+    }
+
 }
