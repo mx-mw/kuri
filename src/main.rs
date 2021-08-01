@@ -121,7 +121,7 @@ mod tests {
 
     #[test]
     fn file_discovery_test() {
-        assert_eq!(vec![format!("blueprints{}test.rs.kbp", get_os_path_standard())], discover_files("blueprints".to_string()));
+        assert_eq!(vec![format!("src{0}test{0}file_discovery.test", get_os_path_standard())], discover_files("src/test/".to_string()));
     }
 
     #[test]
