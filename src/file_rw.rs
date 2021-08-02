@@ -8,7 +8,7 @@ use std::env;
 *****Read a blueprint file*****
 ******************************/
 
-pub fn read_file(path_string: String) -> String {
+pub fn read_file(path_string: &'_ String) -> String {
     let path_object = Path::new(&path_string);
     let display = path_object.display();
     let mut file = match File::open(&path_object) {

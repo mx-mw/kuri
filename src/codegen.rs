@@ -59,7 +59,7 @@ pub fn codegen(
 *****Enumerate over a list of custom flags*****
 **********************************************/
 
-fn enumerate_custom_flags(
+pub fn enumerate_custom_flags(
     src: String,
     customs: std::vec::Vec<CustomFlag>,
     args: &[String],
@@ -116,7 +116,7 @@ pub fn argfile(flag: CustomFlag, args: &[String], source: String) -> String {
         .unwrap();
     check_args(args, index);
     let path = args[index - 1].clone();
-    let file = read_file(path);
+    let file = read_file(&path);
     source.replace(format!("%!%{}%!%", flag.name).as_str(), file.as_str())
 }
 
@@ -126,7 +126,7 @@ pub fn argfile(flag: CustomFlag, args: &[String], source: String) -> String {
 
 pub fn file(flag: CustomFlag, source: String) -> String {
     let path = remove_prefix(flag.replace_with, &"file|");
-    let file = read_file(path);
+    let file = read_file(&path);
     source.replace(format!("%!%{}%!%", flag.name).as_str(), file.as_str())
 }
 
