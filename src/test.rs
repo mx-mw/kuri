@@ -171,29 +171,29 @@ fn cf_enumeration_test() {
         },
     ];
 
-    assert_eq!(enumerate_custom_flags(
-        "%!%Test1%!%--%!%Test2%!%--%!%Test3%!%--%!%Test4%!%--".to_string(),
-        flags.clone(),
-        &[
-            "Test2Tested".to_string(),
-            format!(
-                "test{0}custom_flags{0}file_2.test",
-                get_os_path_standard()
-            ),
-        ],
-    ), "test1tested--Test2Tested--ArgfileTest1\n--ArgfileTest2\n--");
+    assert_eq!(
+        enumerate_custom_flags(
+            "%!%Test1%!%--%!%Test2%!%--%!%Test3%!%--%!%Test4%!%--".to_string(),
+            flags.clone(),
+            &[
+                "Test2Tested".to_string(),
+                format!("test{0}custom_flags{0}file_2.test", get_os_path_standard()),
+            ],
+        ),
+        "test1tested--Test2Tested--ArgfileTest1\n--ArgfileTest2\n--"
+    );
 
-    assert_ne!(enumerate_custom_flags(
-        "%!%Test1%!%--%!%Test2%!%--%!%Test3%!%--%!%Test4%!%--".to_string(),
-        flags.clone(),
-        &[
-            "Test2Tested".to_string(),
-            format!(
-                "test{0}custom_flags{0}file_2.test",
-                get_os_path_standard()
-            ),
-        ],
-    ), "Test1Tested--Test2Tested--ArgfileTest1\n--ArgfileTest2\n--");
+    assert_ne!(
+        enumerate_custom_flags(
+            "%!%Test1%!%--%!%Test2%!%--%!%Test3%!%--%!%Test4%!%--".to_string(),
+            flags.clone(),
+            &[
+                "Test2Tested".to_string(),
+                format!("test{0}custom_flags{0}file_2.test", get_os_path_standard()),
+            ],
+        ),
+        "Test1Tested--Test2Tested--ArgfileTest1\n--ArgfileTest2\n--"
+    );
 }
 
 // test custom flag arg replacement
@@ -420,7 +420,6 @@ fn get_io_directories_test() {
 
     let config_3 = new_dummy_cf("Test3", "", "bps");
 
-
     assert_eq!(
         get_directories(&config_3),
         ("bps".to_string(), "src".to_string())
@@ -431,7 +430,6 @@ fn get_io_directories_test() {
     );
 
     let config_4 = new_dummy_cf("Test4", "", "app");
-
 
     assert_eq!(
         get_directories(&config_4),
@@ -457,11 +455,11 @@ fn new_dummy_cf(name: &'static str, src_dir: &'static str, bp_dir: &'static str)
             version: None,
             blueprint_dir: match bp_dir {
                 "" => None,
-                s  => Some(s.to_string())
+                s => Some(s.to_string()),
             },
             src_dir: match src_dir {
                 "" => None,
-                s  => Some(s.to_string())
+                s => Some(s.to_string()),
             },
         },
         template: None,
