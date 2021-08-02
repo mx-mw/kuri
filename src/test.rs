@@ -387,22 +387,8 @@ fn remove_prefix_test() {
 
 // test getting input & output directories
 #[test]
-fn get_io_directories() {
-    let config_1 = ConfigFile {
-        flags: None,
-        meta: Meta {
-            kuri_version: "1.0.1".to_string(),
-        },
-        project: Project {
-            project_name: "Test".to_string(),
-            repo: None,
-            license: None,
-            version: None,
-            blueprint_dir: Some("bps".to_string()),
-            src_dir: Some("src".to_string()),
-        },
-        template: None,
-    };
+fn get_io_directories_test() {
+    let config_1 = new_dummy_cf("src", "bps", "source");
 
     assert_eq!(
         get_directories(&config_1),
@@ -421,21 +407,7 @@ fn get_io_directories() {
         ("blueprints".to_string(), "source".to_string())
     );
 
-    let config_2 = ConfigFile {
-        flags: None,
-        meta: Meta {
-            kuri_version: "1.0.1".to_string(),
-        },
-        project: Project {
-            project_name: "Test2".to_string(),
-            repo: None,
-            license: None,
-            version: None,
-            blueprint_dir: None,
-            src_dir: None,
-        },
-        template: None,
-    };
+    let config_2 = new_dummy_cf("Test2", "", "");
 
     assert_eq!(
         get_directories(&config_2),
@@ -446,21 +418,8 @@ fn get_io_directories() {
         ("bps".to_string(), "src".to_string())
     );
 
-    let config_3 = ConfigFile {
-        flags: None,
-        meta: Meta {
-            kuri_version: "1.0.1".to_string(),
-        },
-        project: Project {
-            project_name: "Test3".to_string(),
-            repo: None,
-            license: None,
-            version: None,
-            blueprint_dir: Some("bps".to_string()),
-            src_dir: None,
-        },
-        template: None,
-    };
+    let config_3 = new_dummy_cf("Test3", "", "bps");
+
 
     assert_eq!(
         get_directories(&config_3),
@@ -471,21 +430,8 @@ fn get_io_directories() {
         ("blueprints".to_string(), "src".to_string())
     );
 
-    let config_4 = ConfigFile {
-        flags: None,
-        meta: Meta {
-            kuri_version: "1.0.1".to_string(),
-        },
-        project: Project {
-            project_name: "Test4".to_string(),
-            repo: None,
-            license: None,
-            version: None,
-            blueprint_dir: None,
-            src_dir: Some("app".to_string()),
-        },
-        template: None,
-    };
+    let config_4 = new_dummy_cf("Test4", "", "app");
+
 
     assert_eq!(
         get_directories(&config_4),
@@ -495,4 +441,29 @@ fn get_io_directories() {
         get_directories(&config_4),
         ("bluperints".to_string(), "src".to_string())
     );
+}
+
+// helper to make a dummy custom flag
+fn new_dummy_cf(name: &'static str, src_dir: &'static str, bp_dir: &'static str) -> ConfigFile {
+    ConfigFile {
+        flags: None,
+        meta: Meta {
+            kuri_version: "1.0.1".to_string(),
+        },
+        project: Project {
+            project_name: name.to_string(),
+            repo: None,
+            license: None,
+            version: None,
+            blueprint_dir: match bp_dir {
+                "" => None,
+                s  => Some(s.to_string())
+            },
+            src_dir: match src_dir {
+                "" => None,
+                s  => Some(s.to_string())
+            },
+        },
+        template: None,
+    }
 }
