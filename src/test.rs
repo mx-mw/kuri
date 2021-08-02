@@ -388,15 +388,15 @@ fn remove_prefix_test() {
 // test getting input & output directories
 #[test]
 fn get_io_directories_test() {
-    let config_1 = new_dummy_cf("src", "bps", "source");
+    let config_1 = new_dummy_cf("Test1", "bps", "source");
 
     assert_eq!(
         get_directories(&config_1),
-        ("bps".to_string(), "src".to_string())
+        ("bps".to_string(), "source".to_string())
     );
     assert_ne!(
         get_directories(&config_1),
-        ("bps".to_string(), "source".to_string())
+        ("bps".to_string(), "src".to_string())
     );
     assert_ne!(
         get_directories(&config_1),
@@ -418,11 +418,11 @@ fn get_io_directories_test() {
         ("bps".to_string(), "src".to_string())
     );
 
-    let config_3 = new_dummy_cf("Test3", "", "bps");
+    let config_3 = new_dummy_cf("Test3", "", "source");
 
     assert_eq!(
         get_directories(&config_3),
-        ("bps".to_string(), "src".to_string())
+        ("blueprints".to_string(), "source".to_string())
     );
     assert_ne!(
         get_directories(&config_3),
@@ -442,7 +442,7 @@ fn get_io_directories_test() {
 }
 
 // helper to make a dummy custom flag
-fn new_dummy_cf(name: &'static str, src_dir: &'static str, bp_dir: &'static str) -> ConfigFile {
+fn new_dummy_cf(name: &'static str, bp_dir: &'static str, src_dir: &'static str) -> ConfigFile {
     ConfigFile {
         flags: None,
         meta: Meta {
