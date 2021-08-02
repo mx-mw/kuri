@@ -54,7 +54,7 @@ pub fn discover_files_loop<'a, 'c, 'b>(
         let bp_type = bp_file.split('.').collect::<Vec<&str>>()[0];
         let filetype = bp_file.split('.').collect::<Vec<&str>>()[1];
         if bp_type == args[2] {
-            let source: String = read_file(format!(
+            let source: String = read_file(&format!(
                 "{}{}{}{}.{}.kbp",
                 input_directory, os_path_standard, generate_path, bp_type, filetype
             ));
