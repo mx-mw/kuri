@@ -141,7 +141,7 @@ export default class %!%ModuleName%!% extends React.Component {
 }
 ```
 
-`$ kuri g class MyComponent` <br><br>
+`$ kuri g component MyComponent` <br><br>
 Output: <br><br>
 `src/MyComponent.h`
 ```tsx
