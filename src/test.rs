@@ -152,22 +152,26 @@ fn cf_enumeration_test() {
     let flags = vec![
         CustomFlag {
             name: "Test1".to_string(),
-            replace_with: "str|Test1Tested".to_string(),
+            source: "str".to_string(),
+            replace_with: "Test1Tested".to_string(),
         },
         CustomFlag {
+            source: "arg".to_string(),
             name: "Test2".to_string(),
-            replace_with: "arg|1".to_string(),
+            replace_with: "1".to_string(),
         },
         CustomFlag {
             name: "Test3".to_string(),
+            source: "file".to_string(),
             replace_with: format!(
-                "file|test{0}custom_flags{0}file_1.test",
+                "test{0}custom_flags{0}file_1.test",
                 get_os_path_standard()
             ),
         },
         CustomFlag {
             name: "Test4".to_string(),
-            replace_with: "argfile|2".to_string(),
+            source: "argfile".to_string(),
+            replace_with: "2".to_string(),
         },
     ];
 
@@ -180,7 +184,7 @@ fn cf_enumeration_test() {
                 format!("test{0}custom_flags{0}file_2.test", get_os_path_standard()),
             ],
         ),
-        "test1tested--Test2Tested--ArgfileTest1\n--ArgfileTest2\n--"
+        "Test1Tested--Test2Tested--ArgfileTest1\n--ArgfileTest2\n--".to_string()
     );
 
     assert_ne!(
@@ -192,7 +196,7 @@ fn cf_enumeration_test() {
                 format!("test{0}custom_flags{0}file_2.test", get_os_path_standard()),
             ],
         ),
-        "Test1Tested--Test2Tested--ArgfileTest1\n--ArgfileTest2\n--"
+        "test1tested--test2tested--argfiletest1\n--argfiletest2\n--".to_string()
     );
 }
 
@@ -202,7 +206,8 @@ fn cf_arg_test() {
     // test for the first positional argument
     let flag_1 = CustomFlag {
         name: "Test".to_string(),
-        replace_with: "arg|1".to_string(),
+        source: "arg".to_string(),
+        replace_with: "1".to_string(),
     };
     assert_eq!(
         arg(
@@ -223,7 +228,8 @@ fn cf_arg_test() {
     // test for the second positional argument
     let flag_2 = CustomFlag {
         name: "TestNumber2".to_string(),
-        replace_with: "arg|2".to_string(),
+        source: "arg".to_string(),
+        replace_with: "2".to_string(),
     };
     assert_eq!(
         arg(
@@ -249,7 +255,8 @@ fn cf_argfile_test() {
     // test for the first positional argument
     let flag_1 = CustomFlag {
         name: "Test".to_string(),
-        replace_with: "argfile|1".to_string(),
+        source: "argfile".to_string(),
+        replace_with: "1".to_string(),
     };
     assert_eq!(
         argfile(
@@ -276,7 +283,8 @@ fn cf_argfile_test() {
     // test for the second positional argument
     let flag_2 = CustomFlag {
         name: "TestNumber2".to_string(),
-        replace_with: "argfile|2".to_string(),
+        source: "argfile".to_string(),
+        replace_with: "2".to_string(),
     };
     assert_eq!(
         argfile(
@@ -308,24 +316,26 @@ fn cf_str_test() {
     // test for a random string
     let flag_1 = CustomFlag {
         name: "Test".to_string(),
-        replace_with: "str|Tested".to_string(),
+        source: "str".to_string(),
+        replace_with: "Tested".to_string(),
     };
     assert_eq!(
         str(flag_1.clone(), "%!%Test%!%".to_string()),
-        "tested".to_string()
+        "Tested".to_string()
     );
     assert_ne!(
         str(flag_1.clone(), "%!%Test%!%".to_string()),
-        "test works".to_string()
+        "Test works".to_string()
     );
     // test for another string
     let flag_2 = CustomFlag {
         name: "TestNumber2".to_string(),
-        replace_with: "str|Test works".to_string(),
+        source: "str".to_string(),
+        replace_with: "Test works".to_string(),
     };
     assert_eq!(
         str(flag_2.clone(), "%!%TestNumber2%!%".to_string()),
-        "test works".to_string()
+        "Test works".to_string()
     );
     assert_ne!(
         str(flag_2.clone(), "%!%TestNumber2%!%".to_string()),
@@ -339,8 +349,9 @@ fn cf_file_test() {
     // test for file_1.test
     let flag_1 = CustomFlag {
         name: "Test".to_string(),
+        source: "file".to_string(),
         replace_with: format!(
-            "file|test{0}custom_flags{0}file_1.test",
+            "test{0}custom_flags{0}file_1.test",
             get_os_path_standard()
         ),
     };
@@ -355,8 +366,9 @@ fn cf_file_test() {
     // test for file_2.test
     let flag_2 = CustomFlag {
         name: "TestNumber2".to_string(),
+        source: "file".to_string(),
         replace_with: format!(
-            "file|test{0}custom_flags{0}file_2.test",
+            "test{0}custom_flags{0}file_2.test",
             get_os_path_standard()
         ),
     };
@@ -370,20 +382,7 @@ fn cf_file_test() {
     );
 }
 
-// test prefix removal
-#[test]
-fn remove_prefix_test() {
-    assert_eq!(remove_prefix("arg|test".to_string(), &"arg|"), "test");
-    assert_ne!(remove_prefix("arg|test".to_string(), &"arg|"), "arg|test");
-    assert_eq!(
-        remove_prefix("argfile|test".to_string(), &"argfile|"),
-        "test"
-    );
-    assert_ne!(
-        remove_prefix("argfile|test".to_string(), &"argfile|"),
-        "argfile|test"
-    );
-}
+
 
 // test getting input & output directories
 #[test]

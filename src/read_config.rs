@@ -32,6 +32,7 @@ pub struct Flags {
 #[derive(Deserialize, Clone)]
 pub struct CustomFlag {
     pub name: String,
+    pub source: String,
     pub replace_with: String,
 }
 
@@ -79,6 +80,8 @@ impl ConfigFile {
         }
     }
 }
+
+
 
 /**********************************
 *****PartialEq Implementations*****

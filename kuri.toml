@@ -15,5 +15,5 @@ kuri_version="1.0"
 
 [flags]
 custom_flags=[
-    {name="ArgTest", replace_with="arg|1"}
+    {name="ArgTest", source="arg", replace_with="1"}
 ]
