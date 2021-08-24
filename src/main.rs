@@ -6,6 +6,7 @@ mod file_rw;
 mod nio;
 mod read_config;
 mod test;
+mod error;
 
 use discover_files::discover_files_loop;
 use file_rw::{get_wd, init_new_config};
@@ -30,7 +31,13 @@ fn main() {
     *************************/
 
     if argc >= 4 && (args[1] == "g" || args[1] == "generate") {
-        let config = ConfigFile::read(None);
+        let config = match ConfigFile::read(None) {
+            Ok(config) => config,
+            Err(e) => {
+                println!("{}", e.message);
+                return;
+            }
+        };
         let (input_directory, output_directory) = get_directories(&config);
 
         let mut generated: Vec<String> = vec![];

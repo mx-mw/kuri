@@ -36,25 +36,14 @@ src_dir="out" # not required
 blueprint_dir="blueprints" # not required
 version="v0.0.1" # not required
 license="LICENSE" # not required
-repo="https://github.com/mx-mw/kuri" #not required
+repo="https://github.com/mx-mw/kuri" # not required
 
-[template] # the project template (e.g. node, ember, CRA, cargo, etc)... not used for now - not required
-language="rust" 
-variant="cargo"
-
-[meta] # kuri metadata... for now only consists of a version... not used for now - required
-kuri_version="0.0.1" # required
-
-[flags] # allows you to replace the default flags with your own - not required
-module_name_rep="[[ModuleName]]"
-license_rep="[[License]]"
-version_rep="[[Version]]"
-custom_flags=[ # kuri allows you to create custom flags. the | and everything before it is ignored
-    {name="ArgTest", replace_with="arg|1"}, # create a custom flag that is replaced by a positional argument (counting from 1). This example would replace %!%ArgTest%!% with the first positional argument passed to kuri
-    {name="StringTest", replace_with="str|wonderful string"}, # create a flag that is replaced by a string. This would replace %!%StringTest%!% with "wonderful string"
-    {name="FileTest", replace_with="file|LICENSE"}, # create a flag that is replaced by the contents of a file. This example would replace %!%FileTest%!% with the contents of the LICENSE file
-    {name="ArgFileTest", replace_with="argfile|2"} # create a flag that is replaced by the contents of a file specified with a positional argument. This example would replace %!%ArgFileTest%!% with the contents of a file specified with the second positional argument
-    ]
+[flags]
+flags=[
+    {name="ModuleName", source="arg", replace_with="1"}, # Create a custom flag %!%ModuleName%!% which is replaced by the first positional argument
+    {name="License", source="file", replace_with="LICENSE"}, # Create a custom flag %!%License%!% which is replaced by the LICENSE file
+    {name="Version", source="str", replace_with="v0.0.1"}, # Create a custom flag %!%Version%!% which is replaced by a string. Realistically I have no idea whether people would actually use this
+]
 
 ```
 

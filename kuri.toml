@@ -5,15 +5,4 @@ blueprint_dir="out"
 version="v0.0.1"
 license="LICENSE"
 repo="https://github.com/mx-mw/kuri"
-
-[template]
-language="rust"
-variant="cargo"
-
-[meta]
-kuri_version="1.0"
-
-[flags]
-custom_flags=[
-    {name="ArgTest", replace_with="arg|1"}
-]
+flags=[{name="ModuleName", source="arg", replace_with="1"}]

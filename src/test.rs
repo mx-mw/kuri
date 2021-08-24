@@ -6,7 +6,7 @@
 use crate::codegen::*;
 use crate::discover_files::discover_files;
 use crate::file_rw::{get_os_path_standard, read_file};
-use crate::read_config::{get_directories, ConfigFile, CustomFlag, Meta, Project};
+use crate::read_config::{get_directories, ConfigFile, CustomFlag, Flags, Project};
 
 use indoc::indoc;
 
@@ -30,18 +30,24 @@ fn config_test() {
         src_dir: None,
     };
 
-    let meta = Meta {
-        kuri_version: "1.0".to_string(),
-    };
-
     let conf_struct = ConfigFile {
-        flags: None,
-        meta: meta,
+        flags: Flags {
+            flags: vec![CustomFlag {
+                name: "test".to_string(),
+                source: "arg".to_string(),
+                replace_with: "tested".to_string(),
+            }],
+        },
         project: project,
-        template: None,
     };
-
-    assert_eq!(conf_struct, ConfigFile::read(Some(conf)))
+    let config_read = match ConfigFile::read(Some(conf)) {
+        Err(e) => {
+            e.display();
+            return;
+        },
+        Ok(config) => config
+    };
+    assert_eq!(conf_struct, config_read)
 }
 
 // test code generation
@@ -54,7 +60,13 @@ fn codegen_test() {
         [meta]
         kuri_version=\"1.0\""}
     .to_string();
-    let config = ConfigFile::read(Some(config_string));
+    let config = match ConfigFile::read(Some(config_string)) {
+        Err(e) => {
+            e.display();
+            return;
+        }
+        Ok(config) => config,
+    };
     assert_eq!(
         codegen(
             "%!%ModuleName%!%".to_string(),
@@ -152,22 +164,23 @@ fn cf_enumeration_test() {
     let flags = vec![
         CustomFlag {
             name: "Test1".to_string(),
-            replace_with: "str|Test1Tested".to_string(),
+            source: "str".to_string(),
+            replace_with: "Test1Tested".to_string(),
         },
         CustomFlag {
+            source: "arg".to_string(),
             name: "Test2".to_string(),
-            replace_with: "arg|1".to_string(),
+            replace_with: "1".to_string(),
         },
         CustomFlag {
             name: "Test3".to_string(),
-            replace_with: format!(
-                "file|test{0}custom_flags{0}file_1.test",
-                get_os_path_standard()
-            ),
+            source: "file".to_string(),
+            replace_with: format!("test{0}custom_flags{0}file_1.test", get_os_path_standard()),
         },
         CustomFlag {
             name: "Test4".to_string(),
-            replace_with: "argfile|2".to_string(),
+            source: "argfile".to_string(),
+            replace_with: "2".to_string(),
         },
     ];
 
@@ -180,7 +193,7 @@ fn cf_enumeration_test() {
                 format!("test{0}custom_flags{0}file_2.test", get_os_path_standard()),
             ],
         ),
-        "test1tested--Test2Tested--ArgfileTest1\n--ArgfileTest2\n--"
+        "Test1Tested--Test2Tested--ArgfileTest1\n--ArgfileTest2\n--".to_string()
     );
 
     assert_ne!(
@@ -192,7 +205,7 @@ fn cf_enumeration_test() {
                 format!("test{0}custom_flags{0}file_2.test", get_os_path_standard()),
             ],
         ),
-        "Test1Tested--Test2Tested--ArgfileTest1\n--ArgfileTest2\n--"
+        "test1tested--test2tested--argfiletest1\n--argfiletest2\n--".to_string()
     );
 }
 
@@ -202,7 +215,8 @@ fn cf_arg_test() {
     // test for the first positional argument
     let flag_1 = CustomFlag {
         name: "Test".to_string(),
-        replace_with: "arg|1".to_string(),
+        source: "arg".to_string(),
+        replace_with: "1".to_string(),
     };
     assert_eq!(
         arg(
@@ -223,7 +237,8 @@ fn cf_arg_test() {
     // test for the second positional argument
     let flag_2 = CustomFlag {
         name: "TestNumber2".to_string(),
-        replace_with: "arg|2".to_string(),
+        source: "arg".to_string(),
+        replace_with: "2".to_string(),
     };
     assert_eq!(
         arg(
@@ -249,7 +264,8 @@ fn cf_argfile_test() {
     // test for the first positional argument
     let flag_1 = CustomFlag {
         name: "Test".to_string(),
-        replace_with: "argfile|1".to_string(),
+        source: "argfile".to_string(),
+        replace_with: "1".to_string(),
     };
     assert_eq!(
         argfile(
@@ -276,7 +292,8 @@ fn cf_argfile_test() {
     // test for the second positional argument
     let flag_2 = CustomFlag {
         name: "TestNumber2".to_string(),
-        replace_with: "argfile|2".to_string(),
+        source: "argfile".to_string(),
+        replace_with: "2".to_string(),
     };
     assert_eq!(
         argfile(
@@ -308,24 +325,26 @@ fn cf_str_test() {
     // test for a random string
     let flag_1 = CustomFlag {
         name: "Test".to_string(),
-        replace_with: "str|Tested".to_string(),
+        source: "str".to_string(),
+        replace_with: "Tested".to_string(),
     };
     assert_eq!(
         str(flag_1.clone(), "%!%Test%!%".to_string()),
-        "tested".to_string()
+        "Tested".to_string()
     );
     assert_ne!(
         str(flag_1.clone(), "%!%Test%!%".to_string()),
-        "test works".to_string()
+        "Test works".to_string()
     );
     // test for another string
     let flag_2 = CustomFlag {
         name: "TestNumber2".to_string(),
-        replace_with: "str|Test works".to_string(),
+        source: "str".to_string(),
+        replace_with: "Test works".to_string(),
     };
     assert_eq!(
         str(flag_2.clone(), "%!%TestNumber2%!%".to_string()),
-        "test works".to_string()
+        "Test works".to_string()
     );
     assert_ne!(
         str(flag_2.clone(), "%!%TestNumber2%!%".to_string()),
@@ -339,10 +358,8 @@ fn cf_file_test() {
     // test for file_1.test
     let flag_1 = CustomFlag {
         name: "Test".to_string(),
-        replace_with: format!(
-            "file|test{0}custom_flags{0}file_1.test",
-            get_os_path_standard()
-        ),
+        source: "file".to_string(),
+        replace_with: format!("test{0}custom_flags{0}file_1.test", get_os_path_standard()),
     };
     assert_eq!(
         file(flag_1.clone(), "%!%Test%!%".to_string()),
@@ -355,10 +372,8 @@ fn cf_file_test() {
     // test for file_2.test
     let flag_2 = CustomFlag {
         name: "TestNumber2".to_string(),
-        replace_with: format!(
-            "file|test{0}custom_flags{0}file_2.test",
-            get_os_path_standard()
-        ),
+        source: "file".to_string(),
+        replace_with: format!("test{0}custom_flags{0}file_2.test", get_os_path_standard()),
     };
     assert_eq!(
         file(flag_2.clone(), "%!%TestNumber2%!%".to_string()),
@@ -367,21 +382,6 @@ fn cf_file_test() {
     assert_ne!(
         file(flag_2.clone(), "%!%TestNumber2%!%".to_string()),
         "ArgfileTest1\n".to_string()
-    );
-}
-
-// test prefix removal
-#[test]
-fn remove_prefix_test() {
-    assert_eq!(remove_prefix("arg|test".to_string(), &"arg|"), "test");
-    assert_ne!(remove_prefix("arg|test".to_string(), &"arg|"), "arg|test");
-    assert_eq!(
-        remove_prefix("argfile|test".to_string(), &"argfile|"),
-        "test"
-    );
-    assert_ne!(
-        remove_prefix("argfile|test".to_string(), &"argfile|"),
-        "argfile|test"
     );
 }
 
@@ -441,13 +441,10 @@ fn get_io_directories_test() {
     );
 }
 
-// helper to make a dummy custom flag
+// helper to make a dummy config file
 fn new_dummy_cf(name: &'static str, bp_dir: &'static str, src_dir: &'static str) -> ConfigFile {
     ConfigFile {
-        flags: None,
-        meta: Meta {
-            kuri_version: "1.0.1".to_string(),
-        },
+        flags: Flags { flags: vec![] },
         project: Project {
             project_name: name.to_string(),
             repo: None,
@@ -462,6 +459,5 @@ fn new_dummy_cf(name: &'static str, bp_dir: &'static str, src_dir: &'static str)
                 s => Some(s.to_string()),
             },
         },
-        template: None,
     }
 }

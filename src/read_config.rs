@@ -4,6 +4,7 @@ use std::fs::File;
 use std::io::prelude::*;
 use std::path::Path;
 use std::fmt;
+use crate::error::ConfigFileError;
 
 /********************************************
 *****Config File structs for TOML parser*****
@@ -11,34 +12,20 @@ use std::fmt;
 
 #[derive(Deserialize, Clone)]
 pub struct ConfigFile {
-    pub template: Option<Template>,
     pub project: Project,
-    pub meta: Meta,
-    pub flags: Option<Flags>,
-}
-#[derive(Deserialize, Clone)]
-pub struct Meta {
-    pub kuri_version: String,
+    pub flags: Flags,
 }
 
 #[derive(Deserialize, Clone)]
 pub struct Flags {
-    pub module_name_rep: Option<String>,
-    pub license_rep: Option<String>,
-    pub version_rep: Option<String>,
-    pub custom_flags: Option<Vec<CustomFlag>>,
+    pub flags: Vec<CustomFlag>,
 }
 
 #[derive(Deserialize, Clone)]
 pub struct CustomFlag {
     pub name: String,
+    pub source: String,
     pub replace_with: String,
-}
-
-#[derive(Deserialize, Clone)]
-pub struct Template {
-    pub language: String,
-    pub variant: Option<String>,
 }
 
 #[derive(Deserialize, Clone)]
@@ -56,7 +43,7 @@ pub struct Project {
 *****************************/
 
 impl ConfigFile {
-    pub fn read(input_text: Option<String>) -> ConfigFile {
+    pub fn read(input_text: Option<String>) -> Result<ConfigFile, ConfigFileError> {
         let mut config_text = String::new();
         if let Some(inp) = input_text {
             config_text = inp;
@@ -74,11 +61,13 @@ impl ConfigFile {
         }
 
         match toml::from_str(config_text.as_str()) {
-            Err(e) => panic!("{}", e),
-            Ok(deserialized) => deserialized,
+            Err(e) => Err(ConfigFileError{ message: format!("Error in kuri.toml: {}", e)}),
+            Ok(deserialized) => Ok(deserialized),
         }
     }
 }
+
+
 
 /**********************************
 *****PartialEq Implementations*****
@@ -100,30 +89,9 @@ impl PartialEq for CustomFlag {
     }
 }
 
-impl PartialEq for Flags {
-    fn eq(&self, other: &Self) -> bool {
-        self.custom_flags == other.custom_flags
-    }
-}
-
-impl PartialEq for Meta {
-    fn eq(&self, other: &Self) -> bool {
-        self.kuri_version == other.kuri_version   
-    }
-}
-
-impl PartialEq for Template {
-    fn eq(&self, other: &Self) -> bool {
-        self.language == other.language && self.variant == other.variant
-    }
-}
-
 impl PartialEq for ConfigFile {
     fn eq(&self, other: &Self) -> bool {
-        self.flags == other.flags
-            && self.project == other.project
-            && self.meta == other.meta
-            && self.template == other.template
+            self.project == other.project
     }
 }
 
@@ -131,14 +99,6 @@ impl PartialEq for ConfigFile {
 *****Debug Implementations*****
 ******************************/
 
-impl fmt::Debug for Template {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.debug_struct("Template")
-            .field("language", &self.language)
-            .field("variant", &self.variant)
-            .finish()
-    }
-}
 
 impl fmt::Debug for Project {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -153,24 +113,6 @@ impl fmt::Debug for Project {
     }
 }
 
-impl fmt::Debug for Meta {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.debug_struct("Meta")
-            .field("kuri_version", &self.kuri_version)
-            .finish()
-    }
-}
-
-impl fmt::Debug for Flags {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.debug_struct("Flags")
-            .field("kuri_version", &self.custom_flags)
-            .field("kuri_version", &self.license_rep)
-            .field("kuri_version", &self.module_name_rep)
-            .field("kuri_version", &self.version_rep)
-            .finish()
-    }
-}
 
 impl fmt::Debug for CustomFlag {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -181,12 +123,18 @@ impl fmt::Debug for CustomFlag {
     }
 }
 
+impl fmt::Debug for Flags {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("Flags")
+            .field("flags", &self.flags)
+            .finish()
+    }
+}
+
 impl fmt::Debug for ConfigFile {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("ConfigFile")
-            .field("template", &self.template)
             .field("project", &self.project)
-            .field("meta", &self.meta)
             .field("flags", &self.flags)
             .finish()
     }
