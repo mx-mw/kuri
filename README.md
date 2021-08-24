@@ -34,10 +34,6 @@ example `kuri.toml`
 project_name="test" # required
 src_dir="out" # not required
 blueprint_dir="blueprints" # not required
-version="v0.0.1" # not required
-license="LICENSE" # not required
-repo="https://github.com/mx-mw/kuri" # not required
-
 [flags]
 flags=[
     {name="ModuleName", source="arg", replace_with="1"}, # Create a custom flag %!%ModuleName%!% which is replaced by the first positional argument

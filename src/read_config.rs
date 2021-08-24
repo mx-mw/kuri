@@ -31,9 +31,6 @@ pub struct CustomFlag {
 #[derive(Deserialize, Clone)]
 pub struct Project {
     pub project_name: String,
-    pub repo: Option<String>,
-    pub license: Option<String>,
-    pub version: Option<String>,
     pub blueprint_dir: Option<String>,
     pub src_dir: Option<String>,
 }
@@ -76,8 +73,6 @@ impl ConfigFile {
 impl PartialEq for Project {
     fn eq(&self, other: &Self) -> bool {
         self.project_name == other.project_name
-            && self.license == other.license
-            && self.version == other.version
             && self.blueprint_dir == other.blueprint_dir
             && self.src_dir == other.src_dir
     }
@@ -104,11 +99,8 @@ impl fmt::Debug for Project {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("Project")
             .field("blueprint_dir", &self.blueprint_dir)
-            .field("license", &self.license)
             .field("project_name", &self.project_name)
-            .field("repo", &self.repo)
             .field("src_dir", &self.src_dir)
-            .field("version", &self.version)
             .finish()
     }
 }
