@@ -6,7 +6,7 @@
 use crate::codegen::*;
 use crate::discover_files::discover_files;
 use crate::file_rw::{get_os_path_standard, read_file};
-use crate::read_config::{get_directories, ConfigFile, CustomFlag, Meta, Project};
+use crate::read_config::{get_directories, ConfigFile, CustomFlag, Flags, Project};
 
 use indoc::indoc;
 
@@ -30,18 +30,24 @@ fn config_test() {
         src_dir: None,
     };
 
-    let meta = Meta {
-        kuri_version: "1.0".to_string(),
-    };
-
     let conf_struct = ConfigFile {
-        flags: None,
-        meta: meta,
+        flags: Flags {
+            flags: vec![CustomFlag {
+                name: "test".to_string(),
+                source: "arg".to_string(),
+                replace_with: "tested".to_string(),
+            }],
+        },
         project: project,
-        template: None,
     };
-
-    assert_eq!(conf_struct, ConfigFile::read(Some(conf)))
+    let config_read = match ConfigFile::read(Some(conf)) {
+        Err(e) => {
+            e.display();
+            return;
+        },
+        Ok(config) => config
+    };
+    assert_eq!(conf_struct, config_read)
 }
 
 // test code generation
@@ -54,7 +60,13 @@ fn codegen_test() {
         [meta]
         kuri_version=\"1.0\""}
     .to_string();
-    let config = ConfigFile::read(Some(config_string));
+    let config = match ConfigFile::read(Some(config_string)) {
+        Err(e) => {
+            e.display();
+            return;
+        }
+        Ok(config) => config,
+    };
     assert_eq!(
         codegen(
             "%!%ModuleName%!%".to_string(),
@@ -163,10 +175,7 @@ fn cf_enumeration_test() {
         CustomFlag {
             name: "Test3".to_string(),
             source: "file".to_string(),
-            replace_with: format!(
-                "test{0}custom_flags{0}file_1.test",
-                get_os_path_standard()
-            ),
+            replace_with: format!("test{0}custom_flags{0}file_1.test", get_os_path_standard()),
         },
         CustomFlag {
             name: "Test4".to_string(),
@@ -350,10 +359,7 @@ fn cf_file_test() {
     let flag_1 = CustomFlag {
         name: "Test".to_string(),
         source: "file".to_string(),
-        replace_with: format!(
-            "test{0}custom_flags{0}file_1.test",
-            get_os_path_standard()
-        ),
+        replace_with: format!("test{0}custom_flags{0}file_1.test", get_os_path_standard()),
     };
     assert_eq!(
         file(flag_1.clone(), "%!%Test%!%".to_string()),
@@ -367,10 +373,7 @@ fn cf_file_test() {
     let flag_2 = CustomFlag {
         name: "TestNumber2".to_string(),
         source: "file".to_string(),
-        replace_with: format!(
-            "test{0}custom_flags{0}file_2.test",
-            get_os_path_standard()
-        ),
+        replace_with: format!("test{0}custom_flags{0}file_2.test", get_os_path_standard()),
     };
     assert_eq!(
         file(flag_2.clone(), "%!%TestNumber2%!%".to_string()),
@@ -381,8 +384,6 @@ fn cf_file_test() {
         "ArgfileTest1\n".to_string()
     );
 }
-
-
 
 // test getting input & output directories
 #[test]
@@ -440,13 +441,10 @@ fn get_io_directories_test() {
     );
 }
 
-// helper to make a dummy custom flag
+// helper to make a dummy config file
 fn new_dummy_cf(name: &'static str, bp_dir: &'static str, src_dir: &'static str) -> ConfigFile {
     ConfigFile {
-        flags: None,
-        meta: Meta {
-            kuri_version: "1.0.1".to_string(),
-        },
+        flags: Flags { flags: vec![] },
         project: Project {
             project_name: name.to_string(),
             repo: None,
@@ -461,6 +459,5 @@ fn new_dummy_cf(name: &'static str, bp_dir: &'static str, src_dir: &'static str)
                 s => Some(s.to_string()),
             },
         },
-        template: None,
     }
 }
