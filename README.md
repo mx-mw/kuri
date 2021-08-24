@@ -38,6 +38,13 @@ version="v0.0.1" # not required
 license="LICENSE" # not required
 repo="https://github.com/mx-mw/kuri" # not required
 
+[flags]
+flags=[
+    {name="ModuleName", source="arg", replace_with="1"}, # Create a custom flag %!%ModuleName%!% which is replaced by the first positional argument
+    {name="License", source="file", replace_with="LICENSE"}, # Create a custom flag %!%License%!% which is replaced by the LICENSE file
+    {name="Version", source="str", replace_with="v0.0.1"}, # Create a custom flag %!%Version%!% which is replaced by a string. Realistically I have no idea whether people would actually use this
+]
+
 ```
 
 Example Usage
