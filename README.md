@@ -16,7 +16,7 @@ Boilerplates
 
 ### Flags:
 `%!%ModuleName%!%` = the name of the module you are generating (passed as the 3rd positional argument)
-`%!%License%!%`    = the project's license (the *path* to the file is specified in kuri.toml, not the whole fucking GPLv3)
+`%!%License%!%`    = the project's license (the *path* to the file is specified in kuri.toml, not the whole GPLv3)
 `%!%Version%!%`    = the current version of the project (specified in kuri.toml)
 
 ### Things to note:
@@ -126,7 +126,7 @@ export default class %!%ModuleName%!% extends React.Component {
 }
 ```
 
-`$ kuri g class MyComponent` <br><br>
+`$ kuri g component MyComponent` <br><br>
 Output: <br><br>
 `src/MyComponent.h`
 ```tsx
