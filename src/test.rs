@@ -23,9 +23,6 @@ fn config_test() {
 
     let project = Project {
         project_name: "TestProject".to_string(),
-        repo: None,
-        license: None,
-        version: None,
         blueprint_dir: None,
         src_dir: None,
     };
@@ -447,9 +444,6 @@ fn new_dummy_cf(name: &'static str, bp_dir: &'static str, src_dir: &'static str)
         flags: Flags { flags: vec![] },
         project: Project {
             project_name: name.to_string(),
-            repo: None,
-            license: None,
-            version: None,
             blueprint_dir: match bp_dir {
                 "" => None,
                 s => Some(s.to_string()),

@@ -2,7 +2,5 @@
 project_name="test"
 src_dir="out"
 blueprint_dir="out"
-version="v0.0.1"
-license="LICENSE"
 repo="https://github.com/mx-mw/kuri"
 flags=[{name="ModuleName", source="arg", replace_with="1"}]

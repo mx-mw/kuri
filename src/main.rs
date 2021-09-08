@@ -13,49 +13,57 @@ use file_rw::{get_wd, init_new_config};
 use nio::*;
 use read_config::{get_directories, ConfigFile};
 use std::env;
+use clap::{App, load_yaml};
 
 /**********************
 *****Main Function*****
 **********************/
 
 fn main() {
-    /******************************************
-    *****put Args in appropriate variables*****
-    ******************************************/
-    let argv = env::args();
-    let argc = argv.len();
-    let args = argv.collect::<Vec<String>>();
+    /******************************
+    *****Load clap yaml config*****
+    ******************************/
+    let yaml = load_yaml!("cli.yaml");
+    let matches = App::from(yaml).get_matches();
 
+    /******************************************
+    *****Get args to appropriate variables*****
+    ******************************************/
+    let args: Vec<String> = env::args().collect();
+    let argc = args.len();
     /*************************
     *****Generate Command*****
     *************************/
 
-    if argc >= 4 && (args[1] == "g" || args[1] == "generate") {
-        let config = match ConfigFile::read(None) {
-            Ok(config) => config,
-            Err(e) => {
-                println!("{}", e.message);
-                return;
-            }
-        };
-        let (input_directory, output_directory) = get_directories(&config);
-
-        let mut generated: Vec<String> = vec![];
-        discover_files_loop(
-            input_directory.as_str(),
-            output_directory.as_str(),
-            &args,
-            &config,
-            &mut generated,
-        );
-
-        if generated.is_empty() {
-            red(format!("No blueprints found for {}", args[2]));
-        } else {
-            for i in generated {
-                green(i);
+    if let Some(ref matches) = matches.subcommand_matches("generate") {
+        if matches.is_present("path") {
+            let config = match ConfigFile::read(None) {
+                Ok(config) => config,
+                Err(e) => {
+                    println!("{}", e.message);
+                    return;
+                }
+            };
+            let (input_directory, output_directory) = get_directories(&config);
+    
+            let mut generated: Vec<String> = vec![];
+            discover_files_loop(
+                input_directory.as_str(),
+                output_directory.as_str(),
+                &args,
+                &config,
+                &mut generated,
+            );
+    
+            if generated.is_empty() {
+                red(format!("No blueprints found for {}", args[2]));
+            } else {
+                for i in generated {
+                    green(i);
+                }
             }
         }
+        
 
     /***********************************
     *****Initialize project command*****
