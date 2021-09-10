@@ -110,7 +110,8 @@ impl fmt::Debug for CustomFlag {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("CustomFlag")
             .field("name", &self.name)
-            .field("kuri_version", &self.replace_with)
+            .field("replace_with", &self.replace_with)
+            .field("source", &self.source)
             .finish()
     }
 }
