@@ -1,8 +1,8 @@
-use std::fs::{File, create_dir};
-use std::io::prelude::*;
-use std::path::Path;
 use indoc::indoc;
 use std::env;
+use std::fs::{create_dir, File};
+use std::io::prelude::*;
+use std::path::Path;
 
 /******************************
 *****Read a blueprint file*****
@@ -49,22 +49,22 @@ pub fn write_generated_file(
 *****Initialize a new config file*****
 *************************************/
 
-pub fn init_new_config() -> std::io::Result<()> {    
+pub fn init_new_config() -> std::io::Result<()> {
     let conf = indoc! {"
     [project]
     project_name=\"Project\"
     
-    [meta]
-    kuri_version=\"1.0\""};
+    [flags]
+    flags=[{name=\"ModuleName\", source=\"arg\", replace_with=\"1\"}]
+    "};
 
     if !Path::new("kuri.toml").exists() {
         let mut file = File::create("kuri.toml")?;
         file.write_all(conf.as_bytes())?;
-        return Ok(())
+        return Ok(());
     }
 
     Err(std::io::Error::new(std::io::ErrorKind::Other, ""))
-    
 }
 
 /**********************************
@@ -74,7 +74,7 @@ pub fn init_new_config() -> std::io::Result<()> {
 pub fn get_wd() -> String {
     match std::env::current_dir() {
         Ok(dir) => dir.display().to_string(),
-        Err(e) => panic!("{}", e)
+        Err(e) => panic!("{}", e),
     }
 }
 
