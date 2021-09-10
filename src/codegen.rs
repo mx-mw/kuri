@@ -13,7 +13,6 @@ pub fn codegen(
     args: &'_ [String],
 ) -> String {
     let mut source = source_string;
-
     enumerate_custom_flags(source, options.flags.flags, args)
 }
 
@@ -26,24 +25,29 @@ pub fn enumerate_custom_flags(
     customs: std::vec::Vec<CustomFlag>,
     args: &[String],
 ) -> String {
+    println!("Codegen");
     let mut source = src;
     for custom_flag in customs {
-        if custom_flag.source == "arg"
+        println!("Codegen");
+        if custom_flag.source.as_str() == "arg"
             && source.contains(format!("%!%{}%!%", custom_flag.name).as_str())
         {
+            println!("Generating flag from arg {}", custom_flag.replace_with);
             source = arg(custom_flag, args, source);
-        } else if custom_flag.source == "str"
+        } else if custom_flag.source.as_str() == "str"
             && source.contains(format!("%!%{}%!%", custom_flag.name).as_str())
         {
             source = str(custom_flag, source)
-        } else if custom_flag.source == "file"
+        } else if custom_flag.source.as_str() == "file"
             && source.contains(format!("%!%{}%!%", custom_flag.name).as_str())
         {
             source = file(custom_flag, source)
-        } else if custom_flag.source == "argfile".to_string()
+        } else if custom_flag.source.as_str() == "argfile".to_string()
             && source.contains(format!("%!%{}%!%", custom_flag.name).as_str())
         {
             source = argfile(custom_flag, args, source)
+        } else {
+            println!("{:?}, {}", custom_flag.source, "arg");
         }
     }
     source
@@ -54,9 +58,7 @@ pub fn enumerate_custom_flags(
 *******************************************************************************/
 
 pub fn arg(flag: CustomFlag, args: &[String], source: String) -> String {
-    let index = flag.replace_with
-        .parse::<usize>()
-        .unwrap();
+    let index = flag.replace_with.parse::<usize>().unwrap();
 
     check_args(args, index);
     source.replace(
@@ -70,9 +72,7 @@ pub fn arg(flag: CustomFlag, args: &[String], source: String) -> String {
 *********************************************************************************/
 
 pub fn argfile(flag: CustomFlag, args: &[String], source: String) -> String {
-    let index = flag.replace_with
-        .parse::<usize>()
-        .unwrap();
+    let index = flag.replace_with.parse::<usize>().unwrap();
     check_args(args, index);
     let path = args[index - 1].clone();
     let file = read_file(&path);

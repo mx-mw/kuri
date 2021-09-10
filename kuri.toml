@@ -1,6 +1,8 @@
 [project]
 project_name="test"
 src_dir="out"
-blueprint_dir="out"
+blueprint_dir="blueprints"
 repo="https://github.com/mx-mw/kuri"
+
+[flags]
 flags=[{name="ModuleName", source="arg", replace_with="1"}]
