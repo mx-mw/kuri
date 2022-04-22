@@ -1,5 +1,2 @@
 /target
-/blueprints
-/out
-./kuri.toml
-/build
+**/*.kbp

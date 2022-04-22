@@ -31,7 +31,7 @@ fn main() -> KResult<()> {
 	let replace_regex = Regex::new("\\{name\\}").unwrap();
 	let res = replace_regex.replace_all(&bp_src, &gen_name);
 
-	let filename = format!("{}.{}", bp_name, k_ext);
+	let filename = format!("{}.{}", gen_name, k_ext);
 
 	let mut save_in = File::create(filename).unwrap();
 	save_in.write_all(res.as_bytes()).unwrap();
@@ -48,7 +48,7 @@ fn find_bp(name: String) -> KResult<String> {
 		}
 		// Check if we have reached root, or if `path` does not exist
 		if is_same_file(path.clone(), "/").unwrap_or(true) {
-			break Err("No .kuri directory found".into());
+			break Err("No blueprint or .kuri directory found".into());
 		}
 		path.push_str("../")
 	}
