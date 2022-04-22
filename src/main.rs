@@ -1,74 +1,69 @@
-extern crate glob;
+use regex::Regex;
+use same_file::is_same_file;
+use std::{env::args, fs::{read_to_string, File}, path::Path};
+use std::io::prelude::*;
 
-mod codegen;
-mod discover_files;
-mod error;
-mod file_rw;
-mod nio;
-mod read_config;
-mod test;
+type KResult<O> = Result<O, String>;
 
-use clap::{load_yaml, App};
-use discover_files::discover_files_loop;
-use file_rw::{get_wd, init_new_config};
-use nio::*;
-use read_config::{get_directories, ConfigFile};
-use std::env;
+fn main() -> KResult<()> {
+	let mut args = args();
 
-/**********************
-*****Main Function*****
-**********************/
+	// Check if we have the correct number of arguments
+	if args.len() != 3 {
+		return Err("Insufficient Arguments".into());
+	}
+	args.next();
+	let bp_name = args.next().unwrap();
+	let gen_name = args.next().unwrap();
 
-fn main() {
-    /******************************************
-     *****Get args to appropriate variables*****
-     ******************************************/
-    let args: Vec<String> = env::args().collect();
-    let argc = args.len();
-    /*************************
-     *****Generate Command*****
-     *************************/
+	// Find the blueprint and read to a string
+	let bp_src = find_bp(bp_name.clone())?;
 
-    if argc >= 3 {
-        let config = match ConfigFile::read(None) {
-            Ok(config) => config,
-            Err(e) => {
-                println!("{}", e.message);
-                return;
-            }
-        };
-        let (input_directory, output_directory) = get_directories(&config);
-        let mut generated: Vec<String> = vec![];
-        discover_files_loop(
-            input_directory.as_str(),
-            output_directory.as_str(),
-            &args,
-            &config,
-            &mut generated,
-        );
-        if generated.is_empty() {
-            red(format!("No blueprints found for {}", args[2]));
-        } else {
-            for i in generated {
-                green(i);
-            }
-        }
+	// Regex to find the k_ext=x property in the blueprint
+	let k_ext_regex = Regex::new("^*k_ext=.$").unwrap();
+	let k_ext = match k_ext_regex.find(&bp_src) {
+		Some(m) => m.as_str(),
+		None    => "k_ext=txt"
+	// Split[1] must exist because it either matched our regex or we explicitly defined it
+	}.split("=").nth(1).unwrap();
 
-    /***********************************
-     *****Initialize project command*****
-     ***********************************/
-    } else if argc == 2 && args[1] == "init" {
-        match init_new_config() {
-            Ok(_) => green(format!("Project initalised in {}", get_wd())),
-            Err(_) => red(format!("Error: project already initalised in {}", get_wd())),
-        }
+	// Regex to replace {name} with the blueprint name
+	let replace_regex = Regex::new("\\{name\\}").unwrap();
+	let res = replace_regex.replace_all(&bp_src, &gen_name);
 
-    /********************************************
-     *****No command found, show proper usage*****
-     *********************************************/
-    } else {
-        println!("Usage:");
-        red("kuri generate <blueprint> <module name>".to_string());
-        red("kuri init".to_string());
-    }
+	let filename = format!("{}.{}", bp_name, k_ext);
+
+	let mut save_in = File::create(filename).unwrap();
+	save_in.write_all(res.as_bytes()).unwrap();
+
+	Ok(())
+}
+
+fn find_bp(name: String) -> KResult<String> {
+	let mut path = "./".to_string();
+	loop {
+		let check = format!("{}.kuri/{}.kbp", path, name);
+		if Path::new(&check).exists() {
+			break Ok(read_blueprint(check)?);
+		}
+		// Check if we have reached root, or if `path` does not exist
+		if is_same_file(path.clone(), "/").unwrap_or(true) {
+			break Err("No .kuri directory found".into());
+		}
+		path.push_str("../")
+	}
+}
+
+fn read_blueprint(name: String) -> KResult<String> {
+	use std::io::ErrorKind;
+	match read_to_string(name) {
+		Ok(s) => Ok(s),
+		Err(e) => match e.kind() {
+			ErrorKind::NotFound => Err("Blueprint not found".into()),
+			ErrorKind::PermissionDenied => Err(r"Insufficient permissions.
+					Try making your user writeable, or if *absolutely necessary*, run kuri as root."
+				.into()),
+			_ => Err(e.to_string()),
+		},
+	}
 }
