@@ -20,17 +20,23 @@ fn main() -> KResult<()> {
 	let bp_src = find_bp(bp_name.clone())?;
 
 	// Regex to find the k_ext=x property in the blueprint
-	let k_ext_regex = Regex::new("^*k_ext=.$").unwrap();
-	let k_ext = match k_ext_regex.find(&bp_src) {
+	let k_ext_regex = Regex::new("\\{k_ext=.+\\}").unwrap();
+	let mut k_ext = match k_ext_regex.find(&bp_src) {
 		Some(m) => m.as_str(),
 		None    => "k_ext=txt"
 	// Split[1] must exist because it either matched our regex or we explicitly defined it
-	}.split("=").nth(1).unwrap();
-
+	}.split("=").nth(1).unwrap().chars();
+	k_ext.next_back();
+	let k_ext = k_ext.as_str();
+	let bp_src = k_ext_regex.replace_all(&bp_src, "rep");
 	// Regex to replace {name} with the blueprint name
 	let replace_regex = Regex::new("\\{name\\}").unwrap();
 	let res = replace_regex.replace_all(&bp_src, &gen_name);
-
+	let replace_regex = Regex::new("\\{title_name\\}").unwrap();
+	let mut capital_gen_name: Vec<char> = gen_name.chars().collect();
+	capital_gen_name[0].make_ascii_uppercase();
+	let capital_gen_name = capital_gen_name.iter().collect::<String>();
+	let res = replace_regex.replace_all(&res, &capital_gen_name);
 	let filename = format!("{}.{}", gen_name, k_ext);
 
 	let mut save_in = File::create(filename).unwrap();
