@@ -28,7 +28,7 @@ fn main() -> KResult<()> {
 	}.split("=").nth(1).unwrap().chars();
 	k_ext.next_back();
 	let k_ext = k_ext.as_str();
-	let bp_src = k_ext_regex.replace_all(&bp_src, "rep");
+	let bp_src = k_ext_regex.replace_all(&bp_src, "");
 	// Regex to replace {name} with the blueprint name
 	let replace_regex = Regex::new("\\{name\\}").unwrap();
 	let res = replace_regex.replace_all(&bp_src, &gen_name);
